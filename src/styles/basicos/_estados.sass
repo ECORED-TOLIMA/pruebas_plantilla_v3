@@ -1,0 +1,80 @@
+@use 'sass:color'
+@use '../variables' as *
+.info-state
+  color: color.adjust($color-info, $lightness: -15%)
+  p
+    color: color.adjust($color-info, $lightness: -15%)
+
+.info-state-bg
+  @extend .info-state
+  background-color: color.adjust($color-info, $lightness: 33%)
+
+
+.success-state
+  color: color.adjust($color-success, $lightness: -15%)
+  p
+    color: color.adjust($color-success, $lightness: -15%)
+  label
+    color: color.adjust($color-success, $lightness: -15%)
+  [type='color'], [type='date'], [type='datetime'], [type='datetime-local'],
+  [type='email'], [type='month'], [type='number'], [type='password'],
+  [type='search'], [type='tel'], [type='text'], [type='time'],
+  [type='url'], [type='week'], input:not([type]),textarea, 
+  select, select[multiple]
+    background-color: color.adjust($color-success, $lightness: 40%)
+    border-color: $color-success
+    color: color.adjust($color-success, $lightness: -15%)
+    &:focus
+      border-color: $color-success
+      box-shadow: $form-box-shadow, 0 0 5px color.adjust($color-success, $lightness: -5%, $alpha: -0.3)
+
+.success-state-bg
+  @extend .success-state
+  background-color: color.adjust($color-success, $lightness: 37%)
+
+
+.warning-state
+  color: color.adjust($color-warning, $lightness: -45%)
+  p
+    color: color.adjust($color-warning, $lightness: -45%)
+  label
+    color: color.adjust($color-warning, $lightness: -45%)
+  [type='color'], [type='date'], [type='datetime'], [type='datetime-local'],
+  [type='email'], [type='month'], [type='number'], [type='password'],
+  [type='search'], [type='tel'], [type='text'], [type='time'],
+  [type='url'], [type='week'], input:not([type]),textarea, 
+  select, select[multiple]
+    background-color: color.adjust($color-warning, $lightness: 23%)
+    border-color: $color-warning
+    color: color.adjust($color-warning, $lightness: -40%)
+    &:focus
+      border-color: $color-warning
+      box-shadow: $form-box-shadow, 0 0 5px color.adjust($color-warning, $alpha: -0.3)
+
+.warning-state-bg
+  @extend .warning-state
+  background-color: color.adjust($yellow, $lightness: 32%)
+
+
+.danger-state
+  color: color.adjust($color-danger, $lightness: -15%)
+  p
+    color: color.adjust($color-danger, $lightness: -15%)
+  label
+    color: color.adjust($color-danger, $lightness: -15%)
+  [type='color'], [type='date'], [type='datetime'], [type='datetime-local'],
+  [type='email'], [type='month'], [type='number'], [type='password'],
+  [type='search'], [type='tel'], [type='text'], [type='time'],
+  [type='url'], [type='week'], input:not([type]),textarea, 
+  select, select[multiple]
+    background-color: color.adjust($color-danger, $lightness: 41%)
+    border-color: $color-danger
+    color: color.adjust($color-danger, $lightness: -15%)
+    &:focus
+      border-color: $color-danger
+      box-shadow: $form-box-shadow, 0 0 5px color.adjust($color-danger, $lightness: -5%, $alpha: -0.3)
+
+
+.danger-state-bg
+  @extend .danger-state
+  background-color: color.adjust($color-danger, $lightness: 39%)

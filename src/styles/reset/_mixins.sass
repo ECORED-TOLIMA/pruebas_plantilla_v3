@@ -1,0 +1,7 @@
+@use 'sass:color'
+@use '../variables' as *
+@function textColor($color)
+  @if (color.channel($color, "lightness", $space: hsl) > 50)
+    @return $color-tipografia
+  @else
+    @return $white

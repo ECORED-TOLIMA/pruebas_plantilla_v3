@@ -1,0 +1,106 @@
+@use 'variables' as *
+.banner-principal-decorativo
+  &-1
+    animation: float1 2.8s ease-in-out infinite alternate
+    position: absolute
+    top: 68%
+    left: -10%
+    width: 20%
+  &-2
+    animation: float1 2.5s ease-in-out infinite alternate
+    position: absolute
+    top: 30%
+    right: 10%
+    width: 20%
+
+
+@keyframes float1
+  0%
+    transform: translateY(20px)
+
+  100%
+    transform: translateY(0px)
+
+.col-lg-7.col-xxl-5.ps-4.ps-sm-5.py-4.py-sm-5.banner-principal__info
+  flex: 0 0 auto !important
+  width: 58.33333333% !important
+.banner-principal__img 
+  padding-bottom: 0 !important;
+//.banner-principal__row .banner-principal__img 
+//    width: 33%;
+    
+.banner-principal p, .banner-principal h1, .banner-principal h2, .banner-principal h3, .banner-principal h4, .banner-principal h5, .banner-principal h6
+  color: $white !important  
+
+.boton *, .boton--sm *,
+.barra-avance__boton--regresar span
+  color: $white !important
+.banner-interno__titulo h1, .banner-interno__titulo h2, 
+.banner-interno__titulo h3, .banner-interno__titulo h4, 
+.banner-interno__titulo h5, .banner-interno__titulo h6
+  color: $color-sistema-texto !important  
+.titulo-principal.color-acento-contenido .titulo-principal__numero span
+  color: $white !important
+figcaption 
+    font-weight: normal !important
+
+.banner-interno__titulo__icono i
+    color: $color-acento-botones !important;
+
+
+/**************************************************************/
+/***CUSTOM STYLES***/
+/**************************************************************/
+.p-full-width
+  padding: 3rem 3.5rem!important;
+.bg-full-width
+  background-size: cover
+  background-repeat: no-repeat
+  background-position: bottom
+  margin-inline: -3.3rem
+.bg-fondo
+  &-1
+    //background-image: url(../assets/curso/bg/3.svg)
+.bg-color
+  &-1
+    background-color: $color-primario
+
+
+
+
+
+
+
+/**************************************************************/
+/*Media Queries*/  
+/**************************************************************/
+
+//// DESKTOP SMALL 1400--------------------------------------
+@media screen and (max-width: $bp-min-xxl)
+  .mb-cus
+    margin-bottom: 2em  !important 
+
+//// TABLET 992--------------------------------------
+@media screen and (max-width: $bp-max-md)
+  .mb-cus
+    margin-bottom: 2em  !important  
+  .col-lg-7.col-xxl-5.ps-4.ps-sm-5.py-4.py-sm-5.banner-principal__info
+    width: 90% !important
+
+  
+ 
+  
+//// TABLET MINI 768--------------------------------------
+@media screen and (max-width: $bp-min-md)
+  .mb-cus
+    margin-bottom: 2em  !important  
+
+  
+
+//// MOBILE 576--------------------------------------
+@media screen and (max-width: $bp-min-sm)
+  .mb-cus
+    margin-bottom: 2em  !important
+
+  
+ 
