@@ -65,8 +65,35 @@ figcaption
   &-1
     background-color: $color-primario
 
+// ============================================================================
+// PALETA MEDIDA DE ESTE CURSO (CF1_13340008)
+// Los hex salen del `fill` del nodo del XD, uno por uno — no de muestrear el PDF, que aplana
+// los modos de fusión. Mismo patrón que CF1_63720048/CF2_63720048: `.bg-N` es SÓLO color, sin
+// radio; el radio va aparte, leído del `r=[...]` del rect (hay rects sin `r`, con 10 y con 20).
+// Medidos en el artboard Introduccion (15bbf878, pág. 2) con spec_pantalla.py.
+// ============================================================================
+.bg-1
+  background-color: #FBDED8      // rosa pálido: caja de texto destacado (916x220 r=10)
+.bg-2
+  background-color: #CFA9E6      // lila: fondo de la ilustración (292x212 sin r)
+.bg-3
+  background-color: #265D99      // azul medio: bloque de video (1228x580 r=10)
 
+// Radios del XD. `.r-0` es explícito para dejar claro que ese rect NO lleva radio.
+.r-0
+  border-radius: 0 !important
+.r-10
+  border-radius: 10px !important
+.r-20
+  border-radius: 20px !important
 
+// Padding medido en el XD, no elegido por parecido. La caja rosa de la pág. 2 tiene el texto a
+// 32 pt del borde por los cuatro lados (medido: izq 34 / arr 32 / abj 28 sobre el rect 916x220).
+// La escala de Bootstrap no tiene ese paso — `p-4` son 24 px y `p-5` son 48 — así que ponerle
+// `p-4` sería el error «medir-a-ojo» del diccionario. Misma razón por la que existen los `.r-N`.
+// OJO: es una clase que define padding, así que la vista NO debe añadirle además un `.p-N`.
+.p-32
+  padding: 32px !important
 
 
 

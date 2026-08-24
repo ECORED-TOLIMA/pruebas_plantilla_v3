@@ -1,0 +1,734 @@
+{
+  "_meta": {
+    "que_es": "Diccionario GLOBAL de errores recurrentes de maquetación SENA. No está organizado por entregable: son los fallos que salen en CUALQUIER curso, así que al arrancar uno nuevo se repasa ENTERO. Vive en el repo padre y se copia al `scripts/` de cada entregable con las demás herramientas.",
+    "campos": {
+      "veces": "cuántas veces lo ha tenido que marcar Luis. Ordena la lista: cuanto más alto, más caro.",
+      "visto_en": "sólo evidencia de reincidencia. NO es un filtro: todos aplican a todos los cursos.",
+      "sintoma": "cómo se ve el error, para reconocerlo en una revisión.",
+      "causa": "por qué se comete.",
+      "regla": "qué hay que hacer.",
+      "detecta": "el comando o la medición que lo caza ANTES de que lo vea Luis.",
+      "check": "id del check automático de verificar_maqueta.py (los que no lo tienen se comprueban a mano)"
+    },
+    "como_usarlo": [
+      "1) Al arrancar un curso: `preparar_curso.py` imprime el diccionario ENTERO como lista de comprobación.",
+      "2) Antes de maquetar cada pantalla: el inventario del artboard responde a la mitad de las entradas.",
+      "3) Al cerrar cada tema: `verificar_maqueta.py` corre los checks automáticos y lista los manuales.",
+      "4) Hallazgo nuevo: se AÑADE aquí (con su check si se puede automatizar) y se pushea al repo padre."
+    ]
+  },
+  "errores": [
+    {
+      "id": "componente-inventado",
+      "veces": 6,
+      "sintoma": "una clase nueva (`.tarjeta--over`, `.nota--barra`, `.hero-caja`, `.col-21-*`) para algo que el kit ya trae",
+      "causa": "no buscar en el kit ni en el CATALOGO antes de escribir CSS",
+      "regla": "buscar la clase en `boulder-kit` y en `referencia/CATALOGO` ANTES de crearla",
+      "detecta": "clases `.tarjeta--*`/`.nota--*` en _custom.sass que no existan en el kit",
+      "check": "clases-inventadas",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005"
+      ],
+      "revision_manuel_2026_07_30": "5.1: armé «foto a media izquierda + tarjeta blanca» con `.row.bg-4` + `.tarjeta--blanca` cuando el catálogo trae `.bloque-texto-g` (`_texto-destacado.sass:224`)"
+    },
+    {
+      "id": "medir-a-ojo",
+      "veces": 5,
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005",
+        "CF2_63720048"
+      ],
+      "sintoma": "una columna, un alto, un padding o una separación que no es la del diseño: el bloque queda más ancho, más alto o más suelto",
+      "causa": "elegir el `col-lg-N`, el `p-N` o el `mt-N` por parecido con otro bloque en vez de medir el rect del XD",
+      "regla": "MEDIR SIEMPRE contra el XD: el ancho (w/1228 -> N/12), el ALTO, el padding (posición del primer texto menos la del rect) y la separación (y del rect siguiente menos el borde del anterior). Nada se hereda de un bloque parecido",
+      "detecta": "inventario_xd.py §1 da w x h y la posición de cada rect. El alto se mide contra el rect de la TARJETA BLANCA del artboard (1328xH), no contra la ventana: el fondo de página es #F3F9FF, así que 'última fila no blanca' devuelve el alto de la ventana y da cifras falsas (+49% a +145%).",
+      "revision_manuel_2026_07_30": "separaciones: `mt-5`→`mt-4` (2 en Tema 1 y el `titulo-sexto` de la Figura 3) y `mt-4`→`mt-2` en las notas pegadas a su párrafo (2 en Tema 6)"
+    },
+    {
+      "id": "color-no-exacto",
+      "veces": 4,
+      "sintoma": "un fondo, un badge o un icono con un color parecido pero no el del XD",
+      "causa": "reinterpretar la paleta en vez de usar el fill del nodo",
+      "regla": "el `fill` del nodo del XD manda para ESE elemento; la hoja de spec sólo para las variables de la plantilla",
+      "detecta": "inventario_xd.py §1 + verificar_maqueta.py --prohibidos",
+      "check": "colores-prohibidos",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005"
+      ],
+      "revision_manuel_2026_07_30": "`bg-N` copiado del bloque vecino: `.bg-3`→`.bg-1` y `.bg-1`→`.bg-6` (x2) en Tema 6",
+      "revision_manuel_2026_08_04": "`$color-acento-botones` devuelto al rect del XD (`#16D95E`) — ver `hex-escrito-muerto`"
+    },
+    {
+      "id": "estilo-de-texto-inventado",
+      "veces": 4,
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ],
+      "sintoma": "un texto en negrilla, cursiva o tachado que en el DOCX no lo lleva (o al revés). Real en CF1: los `Tipo A/B/C` de la Tabla 4 los puse en negrilla y en el DOCX no lo están",
+      "causa": "decidir el énfasis por criterio propio en vez de leer el formato del run del DOCX",
+      "regla": "el formato del DOCX manda: si en el Word un texto NO va en negrilla/cursiva/tachado, en la maqueta tampoco. Y si lo lleva, se reproduce",
+      "detecta": "contar los runs con `<w:b/>` en `word/document.xml` y comprobar CADA término que se vaya a poner en `b`: `docx_text.py` devuelve texto plano y pierde el formato",
+      "revision_manuel_2026_07_30": "2.5: puse en negrilla la primera columna de las 7 filas de la tabla; el DOCX no la lleva"
+    },
+    {
+      "id": "cajon-sin-pestana",
+      "veces": 3,
+      "sintoma": "un `.cajon` de más o de menos respecto al XD",
+      "causa": "decidir por parecido, sin buscar la pestaña de 25x8",
+      "regla": "sólo las cajas con pestaña de 25x8 son `.cajon`",
+      "detecta": "verificar_maqueta.py §4b",
+      "check": "cajones",
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "fondo-decorativo",
+      "veces": 3,
+      "sintoma": "la banda decorativa no llega a los bordes, o el contenido queda pegado a los lados",
+      "causa": "`margin-inline` insuficiente y contenido sin envolver",
+      "regla": "PNG con el tamaño del XD + `cover` + `margin-inline: -6.2rem`, contenido en `.row.justify-content-center > .col-11`; en móvil `0` y a 12 columnas",
+      "detecta": "comparar 1:1 con el PDF y medir por CDP el mismo `left`/`width` que el cajón de al lado",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005",
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "icono-repetido",
+      "veces": 3,
+      "sintoma": "dos tarjetas del mismo slider con el MISMO icono",
+      "causa": "quedarse sin iconos exportados y reusar uno «parecido» para no parar",
+      "regla": "cada tarjeta lleva SU icono: si falta, se exporta; nunca se repite uno",
+      "detecta": "`grep -oE \"temas/t./[a-z0-9]+\\.(png|svg)\" src/views/TemaN.vue | sort | uniq -c` — cualquier cuenta > 1 dentro del mismo tema es sospechosa",
+      "check": "iconos-repetidos",
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ],
+      "revision_manuel_2026_07_30": "11 referencias repetidas: Tema 2 (i2, i3, i7 x3, i8, i9) y Tema 6 (i8, i9, i10, i14 x3, i15, i16). Manuel exportó los 13 iconos que faltaban.",
+      "pendiente": "los 2 de Tema1.vue (i15, i16) siguen repetidos en la entrega final: ni Manuel los tocó",
+      "excepcion": "un ADORNO que el XD repite a propósito no es un icono repetido: en el Tema 5 de CF2 el badge del corazón es el MISMO nodo (`Rectángulo 456429`) en tres bloques. Antes de dar por bueno el aviso del check 1b, contar las veces que aparece ese nodo en el artboard: si el XD lo repite, se repite."
+    },
+    {
+      "id": "pdf-como-autoridad-de-color",
+      "veces": 3,
+      "sintoma": "reproducir un color o un fondo del PDF que el XD tiene distinto",
+      "causa": "el PDF sale con la paleta vieja y aplasta mal los `blendMode`",
+      "regla": "el PDF sirve para encuadre, anchos, orden y qué estado va abierto; el color lo manda el XD",
+      "detecta": "comparar el fill del nodo con el píxel del PDF",
+      "visto_en": [
+        "CF01_22810005",
+        "CF1_63720048",
+        "CF2_63720048"
+      ],
+      "tercera_vez_2026_08_04": "la banda del 2.4 del Tema 2 de CF2 (`Rectángulo 456113`, 1328x747) sale VIOLETA OSCURA en el PDF y es un degradado CLARO lavanda #E3D7FF -> azul #97CBFF. Mismo aplastado de blendMode que el hero. Se exporta el rect solo y se leen sus esquinas"
+    },
+    {
+      "id": "col-por-ancho-de-imagen",
+      "veces": 2,
+      "sintoma": "una foto lateral con más aire del que tiene en el diseño (o menos)",
+      "causa": "elegir el par de columnas «de memoria» (8/4) en vez de calcularlo con el ancho medido",
+      "regla": "`col = round(ancho_px / 1228 x 12)`, con 1228 = ancho útil de la tarjeta blanca. 292px -> col-lg-3 (NO col-lg-4); 392px -> col-lg-4; 396/397px -> col-lg-4",
+      "detecta": "por cada `img … style=\"width: Npx\"`, comparar el `col-lg-K` que lo envuelve con `round(N/1228*12)`",
+      "check": "col-por-ancho",
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ],
+      "revision_manuel_2026_07_30": "5 casos, todos con foto de 292px en `col-lg-4`: 2.3, 2.4 y 2.5. Las de 396px, que ya tenía en col-lg-4, no las tocó -> la fórmula es la buena."
+    },
+    {
+      "id": "infografia-no-siempre-igual",
+      "veces": 2,
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "sintoma": "aplicar la misma receta de infografía de puntos calientes a todas por igual",
+      "causa": "tratar la receta como plantilla fija en vez de adaptarla a cada ilustración",
+      "regla": "las infografías NO son todas iguales: el número de puntos, dónde caen (sobre los elementos de la ilustración, no siempre a los lados), el ancho de la columna y la variante móvil se adaptan a cada una. La receta da la estructura, no las coordenadas",
+      "detecta": "mirar la ilustración exportada y colocar cada punto sobre el elemento que le corresponde; comprobar por CDP que el punto cae encima",
+      "revision_manuel_2026_07_30": "Figura 3: las tarjetas son `.color-primario` (azul #8EC5FC), no `.color-acento-botones`; el punto mide 4.5% (el kit trae 2.5%); y las x/y son 20/80 x 20/50/80, no mi plantilla 15/85 x 30/50/70"
+    },
+    {
+      "id": "listas-sin-negrilla-ni-sangria",
+      "veces": 2,
+      "sintoma": "la viñeta en peso normal y la 2ª línea debajo de la viñeta",
+      "causa": "no mirar el peso del XD ni pensar el salto de línea",
+      "regla": "viñeta en negrilla + sangría francesa (`padding-left:32px; text-indent:-32px`) en TODAS",
+      "detecta": "revisar una lista que salte de línea",
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "movil-desborde",
+      "veces": 2,
+      "sintoma": "en móvil un bloque se sale por la derecha",
+      "causa": "`margin-inline` negativo o un ancho fijo en px",
+      "regla": "en móvil `margin-inline: 0` y anchos al 100%",
+      "detecta": "verificar_maqueta.py mide por CDP que ningún `right` supere el `clientWidth`",
+      "check": "desborde-movil",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005"
+      ]
+    },
+    {
+      "id": "movil-tarjetas-pegadas",
+      "veces": 2,
+      "sintoma": "en móvil las tarjetas quedan pegadas",
+      "causa": "la separación puesta en el fondo decorativo, no en la tarjeta",
+      "regla": "`margin-bottom` en la tarjeta bajo `$bp-max-md`, en CUALQUIER fila",
+      "detecta": "captura a 412/485 px",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "numeral-del-titulo",
+      "veces": 2,
+      "sintoma": "el recuadro del número/ícono del título con otro color, o el número en blanco",
+      "causa": "BASE fuerza `$white` en `.titulo-principal__numero span`, y `$color-acento-contenido` no es el del XD",
+      "regla": "el badge lleva el color del nodo y el número va OSCURO",
+      "detecta": "muestrear el badge del render contra el rect del XD",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005"
+      ]
+    },
+    {
+      "id": "parrafo-fuera-de-su-columna",
+      "veces": 2,
+      "sintoma": "el párrafo de cierre a ancho completo cuando en el diseño respeta el ancho de la columna de texto que tiene encima",
+      "causa": "sacar el último párrafo del bloque «por costumbre», sin medir su ancho",
+      "regla": "si la x y el ancho del párrafo coinciden con la columna de arriba, va DENTRO de esa columna; sólo va a nivel de página si mide los 1228px",
+      "detecta": "ancho del texto en el inventario del artboard vs 1228",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048",
+        "CF2_63720048"
+      ],
+      "revision_manuel_2026_07_30": "7 párrafos: 2.4, 4.3, 4.4 y cuatro en Tema 6",
+      "reincidencia_2026_08_05": "lo tenía escrito en este mismo diccionario y lo volví a incumplir en el cierre del 4.1 y del 5.2. La comprobación es de una línea: si la x del párrafo coincide con la de la columna que tiene al lado una foto o ilustración, el párrafo va DENTRO de esa columna."
+    },
+    {
+      "id": "radio-a-granel",
+      "veces": 2,
+      "sintoma": "cajas redondeadas que en el XD son cuadradas (o al revés)",
+      "causa": "`border-radius` en la clase de color en vez del `r` del rect",
+      "regla": "`.bg-N` es SÓLO color; el radio va en `.r-0/.r-5/.r-10/.r-20`",
+      "detecta": "inventario_xd.py §1: los pares `SIN r` van cuadrados",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "`.bg-1.r-10`→`.bg-1` en 4.3 y `.bg-3.r-10`→`.bg-1` en Tema 6: esas notas son CUADRADAS"
+    },
+    {
+      "id": "tarjeta-hover-mal-leida",
+      "veces": 2,
+      "sintoma": "una fila con colores distintos, cuando una tarjeta era el estado hover",
+      "causa": "leer el `:hover` que dibuja el diseñador como otra tarjeta",
+      "regla": "una tarjeta/icono de otro color en la fila = `:hover` -> `.tarjeta--boton` con los dos iconos cruzados por `opacity`",
+      "detecta": "inventario_xd.py §4",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "utilidad-bootstrap-pisa-la-clase-custom",
+      "veces": 2,
+      "sintoma": "una tarjeta con el círculo del icono montado arriba se sale por abajo de su columna y se monta sobre el bloque siguiente. Real en CF2: las 4 tarjetas de los sistemas del Tema 1 se salían 75 px y quedaban 27 px encima del párrafo de debajo",
+      "causa": "combinar `.h-100` (o `.p-4`) con una clase custom que YA declara `height` (o `padding`): la utilidad de Bootstrap es `!important` y gana, así que se pierde el `height: calc(100% - 75px)` que compensa el `margin-top` del icono y la tarjeta acaba midiendo la columna entera MÁS el margen",
+      "regla": "una clase custom que ya declara `height` o `padding` NO se combina con la utilidad equivalente de Bootstrap: la clase sola ya iguala los altos. Si aun así puede llegar combinada, se blinda con dos clases (`.tarjeta--icono-arriba.h-100`) para ganarle al `!important`",
+      "detecta": "verificar_maqueta.py check 4d: por CDP y en escritorio, ningún hijo de un `col-*` con el `bottom` por debajo del de su columna. Medir con viewport ALTO y esperando a que las imágenes estén `complete`, o los altos bailan 75-100 px",
+      "check": "caja-fuera-de-columna",
+      "visto_en": [
+        "CF2_63720048"
+      ],
+      "revision_luis_2026_08_04": "Tema 1: `.h-100` sobre `.tarjeta--icono-arriba` en las 4 tarjetas de los sistemas y en los 3 paneles del 1.2. En CF1 la misma clase se usa SIN `.h-100` y por eso allí no salió nunca. Hermano de `margen-negativo-colapsado`: misma clase, mismos 75 px, fallo opuesto (allí el icono no sobresalía, aquí sobresale y arrastra la caja)",
+      "reincidencia_2026_08_05": "el `.p-4` de la vista pisó el `padding-top: 0` de `.tarjeta--badge-arriba` (las utilidades llevan !important) y el badge, que en el XD va centrado sobre el borde, quedaba casi entero dentro. Si una clase custom define padding, la vista NO le pone además una utilidad."
+    },
+    {
+      "id": "actividad-imagenes-de-plantilla",
+      "veces": 1,
+      "sintoma": "las fotos del cuestionario son de otro curso y encima repetidas (5 distintas en 10 archivos)",
+      "causa": "el scaffold trae `imagen1..10.png` YA duplicadas, y como el XD no tiene artboard de actividad se quedan tal cual «de momento»",
+      "regla": "las imágenes de la actividad NO están en el XD ni en el PDF: las aporta el diseñador. Comprobar que los 10 md5 son distintos; si la fuente no las trae, dejarlas y anotarlo en REVISION-PENDIENTES (no dar por bueno el duplicado)",
+      "detecta": "verificar_maqueta.py --estaticos (check 1g: md5 de src/assets/actividad/imagen*.png)",
+      "check": "actividad-imagenes",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_08_04": "sustituyó las 10 por 10 avatares distintos de 396x396 con las formas y la paleta del curso; no salen de ningún recurso del .xd (0 recursos nuevos en el zip)"
+    },
+    {
+      "id": "actividad-sin-barajar-respuestas",
+      "veces": 1,
+      "sintoma": "las opciones de cada pregunta salen siempre en el mismo orden y la correcta siempre en la misma posición",
+      "causa": "poner `barajarPreguntas` (que sí conocía) y no ver que hay un segundo interruptor POR PREGUNTA",
+      "regla": "`barajarRespuestas: true` en CADA pregunta, además del `barajarPreguntas: true` del cuestionario (`actividadCuestionario/Actividad.vue` baraja `pregunta.opciones` sólo si está)",
+      "detecta": "verificar_maqueta.py --estaticos (check 1f cuenta `barajarRespuestas` contra el nº de preguntas)",
+      "check": "actividad-vs-docx",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "actividad-texto-no-literal",
+      "veces": 1,
+      "sintoma": "la actividad didáctica con textos redactados por mí: objetivo genérico, mensajes finales inventados, retroalimentaciones resumidas",
+      "causa": "tratar el cuestionario como copy que se escribe, cuando está ENTERO en las tablas del `_AD.docx`",
+      "regla": "cada celda del AD.docx va LITERAL: «Nombre de la Actividad» -> `tema`; el tipo del encabezado («CUESTIONARIO») -> `titulo`; «Objetivo de la actividad» -> `introduccion` como `<b>Objetivo:</b> ` + el texto; «MENSAJE FINAL» -> `mensaje_final_aprobado`/`_reprobado`. ÚNICA licencia: quitar el prefijo «¡Correcto!»/«¡Incorrecto!» de las retroalimentaciones, que el kit ya pinta",
+      "detecta": "verificar_maqueta.py --estaticos (check 1f: compara la vista contra las tablas del docx)",
+      "check": "actividad-vs-docx",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_08_04": "reescribió `Actividad.vue` entera: objetivo, los dos mensajes finales y el «¡Correcto!» de las 20 retroalimentaciones. El prefijo SÍ se duplica en kit 1.0.9 (medido: «¡Correcto!¡Correcto! El principio de…»), así que ese trozo de su versión no se copia"
+    },
+    {
+      "id": "alt-inventariado",
+      "veces": 1,
+      "sintoma": "un `alt` de 60 palabras enumerando cada elemento de la figura",
+      "causa": "describir la imagen «para que no falte nada» en vez de resumirla",
+      "regla": "el `alt` son DOS frases: qué muestra la figura (con el prefijo «Figura N.») y qué permite concluir. En las imágenes DENTRO de `ImagenInfografica`, `alt=\"\"`: el texto ya lo llevan las tarjetas",
+      "detecta": "`alt` de más de ~45 palabras, o `alt` no vacío dentro de un `ImagenInfografica`",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "Figura 1 de Tema 1, el mapa de la Síntesis y las dos infografías de puntos calientes"
+    },
+    {
+      "id": "asset-envuelto-en-fondo-que-ya-trae",
+      "veces": 1,
+      "sintoma": "la ilustración sale con doble fondo: el del SVG y el `.bg-N.p-3` con el que la envolví",
+      "causa": "reproducir el color que se ve detrás de la imagen sin abrir el asset",
+      "regla": "ABRIR el asset antes de envolverlo: si ya trae su fondo y su radio, va solo. Y si el vector está mal exportado, se reexporta, no se disimula con un contenedor",
+      "detecta": "figure con clase `bg-*`/`r-*` cuyo `img` es un `.svg` con fondo propio",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "asset-inexistente",
+      "veces": 1,
+      "sintoma": "la vista entera en gris",
+      "causa": "un `@/assets/...` que no existe -> overlay de Vite",
+      "regla": "comprobar cada asset antes de renderizar",
+      "detecta": "verificar_maqueta.py §1 y §2",
+      "check": "assets-y-vistas",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005"
+      ]
+    },
+    {
+      "id": "banda-de-fondo-sin-row-propia",
+      "veces": 1,
+      "sintoma": "las tarjetas/figura de dentro de una banda decorativa salen pegadas a los bordes o más anchas de lo que dice el XD",
+      "causa": "colgar el contenido directamente de la `.row` que lleva la clase del fondo",
+      "regla": "la banda es `.row.bg-* > .col-12 > .p-5`, y DENTRO cada componente lleva su PROPIA `.row.justify-content-center > .col-lg-N` con el N medido del XD. La banda va a 12 columnas; el contenido, al suyo",
+      "detecta": "en el Pug, hijos que no sean `.col-12` colgando de una `.row` con clase `bg-fondo-*`",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "bloque-de-color-maquetado-como-parrafo",
+      "veces": 1,
+      "sintoma": "un párrafo suelto donde el XD dibuja una caja de color",
+      "causa": "leer el texto y no el rect que lo envuelve",
+      "regla": "si en la ficha hay un rect con fill detrás del texto, es un bloque (`.cajon` si tiene pestaña de 25x8, si no `.bg-N`), nunca un `p` suelto",
+      "detecta": "comparar_bloques.py: sale un bloque del artboard sin pareja en el render",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "bloques-contiguos-separados",
+      "veces": 1,
+      "sintoma": "dos cajas que en el XD se tocan salen con un hueco entre ellas",
+      "causa": "poner `mt-4` entre bloques por costumbre sin mirar la ficha",
+      "regla": "si `y + alto` de un bloque es igual a la `y` del siguiente, van PEGADOS: sin margen. La ficha lo dice con dos números",
+      "detecta": "en la ficha, restar y+alto del bloque a la y del siguiente: si da 0, van pegados",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "cajon-con-radio-inventado",
+      "veces": 1,
+      "sintoma": "`.cajon` con `border-radius: 10px` cuando el rect del XD y el catálogo lo tienen recto",
+      "causa": "dar por hecho que toda caja de aviso va redondeada",
+      "regla": "el radio del `.cajon` sale del rect del XD; si no trae `r`, va SIN border-radius. Vale para la clase, no solo para la instancia",
+      "detecta": "grep 'border-radius' en las clases .cajon de _custom.sass y contrastar con el `r` del rect del XD",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "columna-vacia",
+      "veces": 1,
+      "sintoma": "un componente a ancho completo y una columna vacía justo encima; en el navegador no da ningún error",
+      "causa": "error de indentación de Pug: se emite `.row > .col-lg-10` y el componente se escribe al nivel de arriba, así que queda FUERA",
+      "regla": "después de escribir un envoltorio `.row > .col-*`, comprobar que el componente quedó indentado DENTRO",
+      "detecta": "cualquier `.col-*` sin hijos en el Pug (una línea `.col-…` seguida de otra con indentación igual o menor)",
+      "check": "columnas-vacias",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "el `AcordionA` de 6.3; el de 6.5, idéntico, sí estaba dentro"
+    },
+    {
+      "id": "comentario-de-bitacora-en-el-codigo",
+      "veces": 1,
+      "sintoma": "comentarios en `.sass`/`.vue` con fechas, nombres propios y el porqué de un cambio",
+      "causa": "documentar la decisión donde se toma en vez de en la bitácora",
+      "regla": "el código se entrega limpio; el porqué va a la BITÁCORA, que además ya no viaja en el repo del entregable (`*.md` gitignoreado). AVISO, no fallo: Manuel borró 2 de 11, así que puede haber sido incidental al revertir la paleta",
+      "detecta": "verificar_maqueta.py --estaticos (check 1i)",
+      "check": "comentarios-bitacora",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "contraste-textcolor",
+      "veces": 1,
+      "sintoma": "el número de una infografía de puntos calientes sale BLANCO sobre el verde claro y no se lee",
+      "causa": "confiar en el automático del kit: `textColor($c)` devuelve oscuro si `lightness(hsl) > 50` y blanco si no",
+      "regla": "calcular el lightness de cada color de la paleta; entre ~40 y 55 el automático es una moneda al aire (`#16D95E` = 46,9 % -> blanco) y hay que forzar el color del XD a mano. Para los números y las viñetas del acento, negro",
+      "detecta": "verificar_maqueta.py --estaticos (check 1h lista los colores en la frontera y sus usos)",
+      "check": "contraste-textcolor",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_08_04": "añadió `.img-infografica.color-acento-botones .img-infografica__item__numero { color: #000000 }` en `_custom.sass`"
+    },
+    {
+      "id": "contrato-del-componente-a-ojo",
+      "veces": 1,
+      "sintoma": "un componente del kit sale VACÍO: la columna está ahí pero dentro no hay nada, y no salta ningún error",
+      "causa": "escribir los hijos del componente a ojo en vez de leer su `v-for`. `LineaTiempoD` necesita `numero` Y `titulo` en cada `.row` hija y el contenido en un `.col-12`; con `.tarjeta(titulo=\"…\")` no pinta nada",
+      "regla": "antes de usar un componente del kit, abrir su `.vue` y leer de qué propiedades tira el `v-for` (`item.numero`, `item.titulo`, `item.elm`). Y comprobarlo EN EL RENDER, que es lo único que lo caza",
+      "detecta": "captura de la vista: si el hueco del componente aparece vacío, el contrato está mal. `verificar_maqueta.py` check 1d sólo caza la columna vacía por indentación, no ésta",
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "degradado-invertido",
+      "veces": 1,
+      "sintoma": "un degradado con los colores al revés",
+      "causa": "`xd_export.paint_to_svg` busca `x1/y1/x2/y2` donde el XD no los guarda y usa los defaults horizontales",
+      "regla": "parche 6 de `xd_patches.py`. AFECTA A TODOS LOS CURSOS: los assets exportados antes están mal",
+      "detecta": "inventario_xd.py §5",
+      "visto_en": [
+        "CF1_63720048",
+        "CF01_22810005",
+        "CF2"
+      ]
+    },
+    {
+      "id": "figura-sin-variante-movil",
+      "veces": 1,
+      "sintoma": "en móvil se ve la figura de escritorio encogida e ilegible",
+      "causa": "no buscar la variante móvil, que el XD deja SIEMPRE al lado de la figura",
+      "regla": "toda figura informativa lleva dos imágenes: `figure.d-none.d-md-block` (la del artboard) y `figure.d-md-none` (la variante apilada que el XD dibuja al lado). Si no la encuentras, no es que no exista: mira al lado del componente y en el pasteboard",
+      "detecta": "vistas con un `figure > img` de una figura numerada sin ningún `d-md-none` hermano",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "fill-rule-evenodd",
+      "veces": 1,
+      "sintoma": "un icono de línea sale como MANCHA SÓLIDA: el triángulo de aviso sin el `!`, los checks sin su círculo, el engranaje sin el aro",
+      "causa": "`xd_export.shape_to_svg` pone `fill-rule=\"evenodd\"` sólo en los `compound`; en un `type: \"path\"` no lo pone nunca, aunque el nodo traiga `\"winding\": \"evenodd\"` (este XD tiene 210). El navegador rellena con `nonzero` y tapa las contraformas.",
+      "regla": "ARREGLADO en `xd_patches.shape_to_svg` (parche 6). En un XD nuevo, comprobar que el SVG generado lleva `fill-rule=\"evenodd\"` en los paths con `winding: evenodd`",
+      "detecta": "`grep -c 'winding\": \"evenodd'` en el .agc vs `grep -c fill-rule` en el SVG generado; y a la vista: contraforma rellena",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "los 4 iconos de Tema 3 (i10, i11, o3, o4). Correlación de mi PNG contra el SVG bueno: 0.70-0.82; con el parche, el icono coincide."
+    },
+    {
+      "id": "foto-por-el-rect-del-nodo",
+      "veces": 1,
+      "sintoma": "una foto sale desplazada unos píxeles y con el encuadre algo distinto al del PDF; la correlación se queda en 0,70-0,85 y hay que rescatarla con fit_foto/fit_composicion",
+      "causa": "exportarla con el bbox del NODO DE IMAGEN, que es la caja del `pattern` y no lo que se ve: el nodo `Imagen 110` mide 303x265 en (181,1741) y lo visible es 292x261 en (186,1743)",
+      "regla": "el rect visible de una foto es el bbox de su `Enmascarar grupo`. Se saca con `mapa_bloques.py <ab> --fotos`, que además imprime el `--rect` listo y el `col-lg-N` que le toca. En el Tema 1 de CF2, 8 de 9 fotos salieron a 0,99 así; por el rect del nodo, 0,70",
+      "detecta": "mapa_bloques.py --fotos + la correlación que ya imprime gen_asset.py --pag N",
+      "check": "fotos-por-mascara",
+      "visto_en": [
+        "CF2_63720048",
+        "CF1_63720048"
+      ],
+      "ojo": "los nombres de los `Enmascarar grupo` se REPITEN dentro del artboard, así que se exporta con `--rect <bbox de la máscara>`, no con `--grupo <nombre>` (cogería el primero)"
+    },
+    {
+      "id": "hex-escrito-muerto",
+      "veces": 1,
+      "sintoma": "la hoja de swatches del XD escribe un hex al lado de un rect de otro color y no se sabe cuál manda",
+      "causa": "asumir que el texto de la hoja es la especificación vigente",
+      "regla": "manda el RECT. Se comprueba contando: si el hex escrito no aparece NI UNA VEZ como `fill` en el artboard, es una etiqueta vieja. En CF1: `#16D95E` 15 fills / `#85E336` 0; `#FFC0AC` 15 / `#FFB866` 0; `#DBC2FA` 14 / `#E3D7FF` 0 (ése sí existe, pero en el degradado del hero)",
+      "detecta": "`grep -o '\"r\":R,\"g\":G,\"b\":B' <agc del artboard> | wc -l` para el hex escrito y para el del rect",
+      "check": "paleta-vs-fills",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "ojo": "esto REVIERTE el hallazgo de Luis del 2026-07-29 («el acento es el hex escrito #85E336»): Manuel dejó `#16D95E` en la entrega final del 2026-08-04"
+    },
+    {
+      "id": "lado-de-la-imagen",
+      "veces": 1,
+      "sintoma": "la foto lateral en el lado contrario al del diseño",
+      "causa": "maquetar siempre texto-izquierda / foto-derecha",
+      "regla": "el lado se mide en el XD; para poner la foto a la IZQUIERDA en escritorio sin romper el orden de lectura en móvil, `.order-2` en la columna de TEXTO (no reordenar el DOM)",
+      "detecta": "comparar la x del rect de la foto con la del bloque de texto en el inventario",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "4.3 (`.col-lg-8.order-2`) y el cierre de 4.3 en Tema 6"
+    },
+    {
+      "id": "lista-vineta-vs-numerada",
+      "veces": 1,
+      "sintoma": "una lista con cuadros numerados donde el diseño pone una viñeta de icono (o al revés)",
+      "causa": "deducir el tipo de lista del contenido («son 5 pasos, luego van numerados»)",
+      "regla": "mirar el GLIFO en el XD: número en cuadro -> `ol.lista-ol--cuadro`; icono -> `ul.lista-ul` con su `i.fas.fa-*`",
+      "detecta": "en el inventario, si delante de cada ítem hay un texto «1,2,3…» o un path de icono",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "6.4: mi `ol.lista-ol--cuadro.lista-numerada--cuadro` era `ul.lista-ul.lista-ul--compacta` con `i.fas.fa-heart`"
+    },
+    {
+      "id": "margen-negativo-colapsado",
+      "veces": 1,
+      "sintoma": "un icono que debía sobresalir queda dentro de la tarjeta, o descentrado",
+      "causa": "el `margin-top` negativo colapsa con el del padre; y `text-align:center` no centra un `img` `display:block`",
+      "regla": "`display: flow-root` en la tarjeta y `margin: auto` en el `img`",
+      "detecta": "medir por CDP el `top` del icono contra el de la tarjeta",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "negrilla-pegada-al-texto",
+      "veces": 1,
+      "sintoma": "«**Heridas:**producen una pérdida…» — el término en negrilla y el texto sin espacio",
+      "causa": "en Pug, `b Término:` en una línea y `| resto` en la siguiente no dejan espacio entre los dos nodos",
+      "regla": "el término en negrilla dentro de un párrafo se escribe con la interpolación en LÍNEA: `span #[b Término:] resto del texto`",
+      "detecta": "grep de `\\n *| ` justo después de una línea `b …` en las vistas; y se ve en cualquier captura",
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "offset-innecesario",
+      "veces": 1,
+      "sintoma": "`col-lg-4.offset-lg-1` (u otro offset) para centrar un bloque que el XD pone a 10 columnas",
+      "causa": "ajustar la posición a ojo con un offset en vez de medir el ancho y centrar la fila",
+      "regla": "centrar con `justify-content-center` en la `.row` y el `col-lg-N` medido; el offset sólo si el XD deja el bloque REALMENTE descentrado",
+      "detecta": "grep 'offset-' en las vistas y comprobar la x del rect en la ficha de spec_pantalla.py",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "placeholder-de-plantilla",
+      "veces": 1,
+      "sintoma": "el título de la pestaña del navegador dice «Ecored Base PKG» en todo el curso",
+      "causa": "el scaffold trae placeholders que no rompen nada, así que no se ven en ninguna captura",
+      "regla": "al arrancar, barrer los placeholders del scaffold: `src/config/titulo.js`, el `base` de `vite.config.js` (`NUEVA_BASE_TOLIMA`), `termino: 'Término'` y `referencia: '---'` de `global.js`",
+      "detecta": "verificar_maqueta.py --estaticos (check 1e)",
+      "check": "placeholders",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "nota": "el `<title>` literal de `index.html` NO cuenta: el plugin `html-title` de vite lo reescribe con `titulo.js`"
+    },
+    {
+      "id": "puntos-calientes-como-figura",
+      "veces": 1,
+      "sintoma": "una infografía interactiva maquetada como imagen estática",
+      "causa": "no buscar el rótulo del componente en el pasteboard",
+      "regla": "si el pasteboard dice `PUNTOS CALIENTES` es `ImagenInfografica`, y los textos están DEBAJO del rótulo",
+      "detecta": "inventario_xd.py §4b",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "radio-de-la-foto",
+      "veces": 1,
+      "sintoma": "una foto cuadrada que en el XD va redondeada",
+      "causa": "no leer el radio de la máscara",
+      "regla": "el `<img>` lleva el radio de su máscara, o va cuadrado",
+      "detecta": "inventario_xd.py §2",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "raster-en-vez-de-svg",
+      "veces": 1,
+      "sintoma": "iconos e infografías de línea entregados en PNG",
+      "causa": "el pipeline siempre rasteriza: `gen_asset.py` construye el SVG y lo tira a Chrome",
+      "regla": "lo VECTORIAL se entrega en SVG (`gen_asset.py … salida.svg`, ya soportado): se salta de golpe los tres sitios donde el rasterizado pierde información (`fill-rule`, la tipografía incrustada, los `blendMode`) y escala sin pixelar. Sólo las FOTOS van en PNG",
+      "detecta": "`src/assets` con `.png` cuyo nodo del XD no tiene ningún `fill.type == \"pattern\"`",
+      "check": "-",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_07_30": "22 assets pasados a SVG; sólo `t4/1.png` y `t6/8.png` (fotos) se quedaron en PNG"
+    },
+    {
+      "id": "reindentar-con-script",
+      "veces": 1,
+      "sintoma": "al mover un bloque de Pug con un script, se reindenta el componente equivocado y la vista queda peor que antes",
+      "causa": "buscar por patrón (`next(... if \"SlyderF\" in l)`) cuando hay DOS componentes con la misma firma en el archivo",
+      "regla": "mover bloques de Pug con una edición de texto EXACTO —el bloque entero, viejo por nuevo—, nunca con búsquedas por patrón ni recortes de indentación. Y si se ha estropeado, `git checkout` del archivo antes de seguir",
+      "detecta": "tras mover un bloque, renderizar: si las tarjetas se apilan a ancho completo, la indentación se rompió",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "require-en-vite",
+      "veces": 1,
+      "sintoma": "la vista en gris al usar un componente data-driven con imágenes",
+      "causa": "`require()` no existe en Vite",
+      "regla": "`import` estático arriba del `<script>`; `require_src` sólo dentro del template",
+      "detecta": "grep de `require(` en las vistas",
+      "check": "require-en-vistas",
+      "visto_en": [
+        "CF01_22810005"
+      ]
+    },
+    {
+      "id": "salto-de-linea-perdido",
+      "veces": 1,
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "sintoma": "un párrafo que en el diseño va partido en dos líneas y en la maqueta sale seguido",
+      "causa": "usar el texto del DOCX y no el `rawText` del XD, que conserva los saltos",
+      "regla": "los `\\n` del `rawText` del XD se reproducen con `br`; en CF1 hay 60 nodos de texto con salto interno",
+      "detecta": "recorrer los nodos `text` del artboard y listar los que tienen `\\n` dentro del texto"
+    },
+    {
+      "id": "sin-prettier",
+      "veces": 1,
+      "sintoma": "el revisor abre un commit y la mitad del diff son saltos de línea suyos",
+      "causa": "no pasar el formateador antes de cerrar la sección",
+      "regla": "`npx prettier --write \"src/**/*.{vue,js,sass}\"` (o `npm run lint`) antes de cerrar. Si no, el siguiente que toque el archivo genera un diff de formato que tapa el cambio real",
+      "detecta": "`npx prettier --check \"src/**/*.{vue,js,sass}\"`",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_08_04": "`global.js` cambió SÓLO porque una cadena larga no estaba partida"
+    },
+    {
+      "id": "slider-sin-colores-ni-imagenes",
+      "veces": 1,
+      "sintoma": "el slider sale con los botones y los bullets verdes del kit, y con imagen sólo en el primer slide",
+      "causa": "maquetar sólo el slide visible del artboard y no pintar el componente",
+      "regla": "los botones adelante/atrás y los bullets se pintan con el color del XD, y CADA slide lleva su imagen: las de los estados ocultos están a un lado del componente en el artboard o en el pasteboard",
+      "detecta": "contar los `figure` del slider contra el número de bullets dibujados en el XD",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "slyderf-en-contenedor-ensanchado",
+      "veces": 1,
+      "sintoma": "el carrusel muestra media tarjeta vecina por los dos lados",
+      "causa": "envolverlo en una banda con `margin-inline` negativo: el contenedor se ensancha y el `__main` calcula sus columnas sobre ese ancho",
+      "regla": "`SlyderF` va al nivel de la tarjeta de contenido, como en los temas ya aprobados. Si el diseño pone una banda detrás, se pinta sin envolver el componente",
+      "detecta": "contar tarjetas visibles en el render: si se ven más de las que dice `columnas`, está desbordado",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "tarjetas-pegadas-mal-estructuradas",
+      "veces": 1,
+      "sintoma": "fila de paneles de colores pegados armada con `.col-lg-4 > .bg-N.r-izq-20` y el icono montado por fuera",
+      "causa": "componer la fila a mano en vez de usar el contenedor del kit",
+      "regla": "es `.tarjeta--container.row > .col-md.tarjeta.bg-N.p-5`, que ya redondea sólo las esquinas exteriores; el icono va DENTRO, en `.row.justify-content-center > .col-6 > figure`",
+      "detecta": "grep 'r-izq-\\|r-der-' en filas de tarjetas de la misma altura",
+      "check": null,
+      "visto_en": [
+        "CF2_63720048"
+      ]
+    },
+    {
+      "id": "texto-dado-por-inexistente",
+      "veces": 1,
+      "sintoma": "anotar que un texto «no está en las fuentes»",
+      "causa": "buscar por los títulos y no por el rótulo del componente",
+      "regla": "antes de declararlo inexistente, buscar el rótulo en el pasteboard y los estados ocultos",
+      "detecta": "inventario_xd.py §4b",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "texto-inventado-en-vez-del-default-del-kit",
+      "veces": 1,
+      "sintoma": "cadenas de interfaz escritas por mí («¡Felicitaciones!», «Vuelva a intentarlo») donde el componente ya trae una",
+      "causa": "rellenar una prop sin mirar su `default`",
+      "regla": "si el DOCX no da el texto, se usa el DEFAULT de la prop del componente, no uno nuevo. `ActividadResultados.vue`: `tituloAprobado: '¡BUEN TRABAJO!'`, `tituloReprobado: 'VUELVE A INTENTARLO'`",
+      "detecta": "`grep -A3 \"tituloAprobado\\|default:\" node_modules/@ecored-sena/boulder-kit/plugin/components/**/*.vue` antes de escribir la cadena",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "vite-modulo-viejo",
+      "veces": 1,
+      "sintoma": "la vista sale con el título del stub y vacía, sin error",
+      "causa": "`rm` + recrear el `.vue`: Vite sirve el módulo cacheado",
+      "regla": "sobreescribir EN SITIO, nunca borrar y crear",
+      "detecta": "`curl '…/TemaN.vue?vue&type=template&lang.js' | grep <título nuevo>`",
+      "visto_en": [
+        "CF1_63720048"
+      ]
+    },
+    {
+      "id": "xd-nuevo-no-es-rediseno",
+      "veces": 1,
+      "sintoma": "llega un `.xd` con otro nombre y otro tamaño y parece que hay que remaquetar",
+      "causa": "no comparar antes de asumir",
+      "regla": "comparar `manifest` (nº y bounds de artboards), la lista del zip (recursos nuevos) y el nº de nodos `type:text` por artboard. Si los textos BAJAN y los `path` SUBEN, lo que pasó es que alguien convirtió texto a curvas: el diseño es el mismo y el XD nuevo es PEOR como fuente (esos textos ya no los ve `xd_read.py`) -> el texto se saca del DOCX y para medir sirve el viejo",
+      "detecta": "`unzip -l` de los dos .xd + contar `\"type\": \"text\"` por `graphicContent.agc`",
+      "visto_en": [
+        "CF1_63720048"
+      ],
+      "revision_manuel_2026_08_04": "`63720048_CF01_DW.xd`: mismos 10 artboards y mismos bounds, 0 recursos nuevos; `Sintesis – PDF` pasó de 40 textos a 3 (paths 102->175) y Tema-6 de 98 a 93"
+    }
+  ]
+}

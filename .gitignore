@@ -20,3 +20,10 @@ pnpm-debug.log*
 *.sln
 *.sw?
 README.md
+
+# --- maquetación SENA ---
+__pycache__/
+# el .xd descomprimido: lo regenera scripts/config.py (descomprimir)
+/fuentes/CF1_13340008/
+# volcados regenerables (preparar_curso.py): texto de los DOCX e inventarios por artboard
+/docs/*.txt
